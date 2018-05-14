@@ -24,6 +24,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @SpringBootApplication
 public class ClientReactiveDemoApplication {
+	
+		@Bean
+		ReactorNettyWebSocketClient client(){
+			return new ReactorNettyWebSocketClient();
+		}
 
 	 	@Bean
 	    WebClient client(@Value("${libary-service-url:http://localhost:8080/}") String url) {
@@ -31,11 +36,13 @@ public class ClientReactiveDemoApplication {
 	                .basicAuthentication("amine", "pw");
 	        return WebClient.builder().baseUrl(url).filter(basicAuth).build();
 	    }
+	 	
+	 	
 
 	    @Bean
 	    ApplicationRunner run(WebClient client) throws URISyntaxException {
 	    	
-	    	WebSocketClient clientWS = new ReactorNettyWebSocketClient();
+	    	WebSocketClient clientWS = client();
 
 	    	URI url = new URI("ws://localhost:8080/reactive");
 	    	clientWS.execute(url, session ->
